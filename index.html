@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRator - Web Buat QR Code dengan Mudah</title>
+    <!-- ✅ SEO Meta Tags -->
+    <meta name="description" content="QRator adalah aplikasi web gratis untuk membuat QR Code dengan mudah. Cocok untuk pelajar, mahasiswa, pekerja, UMKM, dan siapa saja yang butuh QR Code cepat.">
+    <meta name="keywords" content="QR Code Generator, QR gratis, QR Code online, pembuat QR, QR untuk UMKM, QRator">
+    <meta name="author" content="QRator Team">
+    <meta name="robots" content="index, follow">
+
+    <!-- ✅ Open Graph (biar bagus kalau dishare di medsos) -->
+    <meta property="og:title" content="QRator - Buat QR Code dengan Mudah">
+    <meta property="og:description" content="QRator adalah aplikasi web gratis untuk membuat QR Code dengan mudah. Tanpa ribet, tanpa biaya, cukup masukkan teks atau link dan bagikan QR Code-mu ke siapa saja.">
+    <meta property="og:url" content="https://qrator-web.netlify.app/">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://qrator-web.netlify.app/preview.png">
+
+    <!-- ✅ Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="QRator - Buat QR Code dengan Mudah">
+    <meta name="twitter:description" content="QRator adalah aplikasi web gratis untuk membuat QR Code dengan mudah.">
+    <meta name="twitter:image" content="https://qrator-web.netlify.app/preview.png">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #7209b7;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --warning: #f72585;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7ff;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 30px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+            color: white;
+            text-align: center;
+            border-radius: 0 0 30px 30px;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            background-color: #5a13a0;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Generator Section */
+        .generator {
+            padding: 80px 0;
+            background-color: white;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+            color: var(--primary);
+        }
+        
+        .generator-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        
+        .generator-form {
+            flex: 1;
+            min-width: 300px;
+            max-width: 500px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+        
+        .qr-type-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .type-btn {
+            padding: 8px 15px;
+            background-color: #eee;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .type-btn.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .qr-preview {
+            flex: 1;
+            min-width: 300px;
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        #qrcode {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .download-btn {
+            background-color: var(--success);
+        }
+        
+        .download-btn:hover {
+            background-color: #3ab0d5;
+        }
+        
+        /* Media Upload Section */
+        .media-upload {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .media-upload.active {
+            display: block;
+        }
+        
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .upload-area:hover {
+            border-color: var(--primary);
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+        
+        .upload-area i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .upload-area p {
+            margin-bottom: 10px;
+        }
+        
+        .upload-area span {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+        
+        #media-preview {
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+        
+        #media-preview img, #media-preview video {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .media-info {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            text-align: left;
+        }
+        
+        .convert-btn {
+            background-color: var(--warning);
+            margin-top: 15px;
+        }
+        
+        .convert-btn:hover {
+            background-color: #d61a6d;
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+            background-color: #f8f9fa;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 50px 0 20px;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 20px;
+            color: var(--success);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                padding: 15px 0;
+            }
+            
+            .nav-links {
+                margin-top: 15px;
+            }
+            
+            .nav-links li {
+                margin-left: 15px;
+                margin-right: 15px;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .qr-type-selector {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="#" class="logo">QRator</a>
+                <ul class="nav-links">
+                    <li><a href="#">Beranda</a></li>
+                    <li><a href="#generator">Buat QR</a></li>
+                    <li><a href="#features">Fitur</a></li>
+                    <li><a href="#about">Tentang</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Dari Ide ke Kode, Sekejap Saja</h1>
+            <p>QRator adalah solusi praktis untuk semua kebutuhan QR Code. Tanpa ribet, tanpa biaya, cukup masukkan teks atau link dan bagikan QR Code-mu ke siapa saja.</p>
+            <a href="#generator" class="btn">Buat QR Code Sekarang</a>
+        </div>
+    </section>
+
+    <!-- Generator Section -->
+    <section id="generator" class="generator">
+        <div class="container">
+            <h2 class="section-title">Generator QR Code</h2>
+            <div class="generator-container">
+                <div class="generator-form">
+                    <div class="qr-type-selector">
+                        <button type="button" class="type-btn active" data-type="text">Teks</button>
+                        <button type="button" class="type-btn" data-type="url">URL</button>
+                        <button type="button" class="type-btn" data-type="contact">Kontak</button>
+                        <button type="button" class="type-btn" data-type="media">Foto/Video</button>
+                    </div>
+                    
+                    <div id="text-fields">
+                        <div class="form-group">
+                            <label for="qr-content">Masukkan Konten QR Code</label>
+                            <textarea id="qr-content" class="form-control" rows="5" placeholder="Masukkan teks atau URL di sini"></textarea>
+                        </div>
+                        
+                        <div id="contact-fields" style="display: none;">
+                            <div class="form-group">
+                                <label for="contact-name">Nama</label>
+                                <input type="text" id="contact-name" class="form-control" placeholder="Nama lengkap">
+                            </div>
+                            <div class="form-group">
+                                <label for="contact-phone">Telepon</label>
+                                <input type="tel" id="contact-phone" class="form-control" placeholder="Nomor telepon">
+                            </div>
+                            <div class="form-group">
+                                <label for="contact-email">Email</label>
+                                <input type="email" id="contact-email" class="form-control" placeholder="Alamat email">
+                            </div>
+                        </div>
+                    </div>
+
+                <form action="order.php" method="POST">
+                    <div id="media-upload" class="media-upload">
+                        <div class="upload-area" id="drop-area">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Seret & Jatuhkan file di sini</p>
+                            <span>atau</span>
+                            <input type="file" id="file-input" accept="image/*,video/*" style="display: none;">
+                            <button class="btn" onclick="document.getElementById('file-input').click()">Pilih File</button>
+                        </div>
+                 </form>       
+                        <div id="media-preview">
+                            <div id="media-container"></div>
+                            <div class="media-info">
+                                <p><strong>Nama File:</strong> <span id="file-name"></span></p>
+                                <p><strong>Ukuran:</strong> <span id="file-size"></span></p>
+                                <p><strong>Tipe:</strong> <span id="file-type"></span></p>
+                            </div>
+                            <button id="convert-btn" class="btn convert-btn">Convert to QR Code</button>
+                        </div>
+                    </div>
+                    
+                    <button id="generate-btn" class="btn">Generate QR Code</button>
+                </div>
+                
+                <div class="qr-preview">
+                    <div id="qrcode"></div>
+                    <button id="download-btn" class="btn download-btn" disabled>Download QR Code</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">Mengapa Memilih QRator?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Mudah dan Cepat</h3>
+                    <p>Buat QR Code dalam hitungan detik dengan antarmuka yang sederhana dan intuitif.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Berbagai Jenis QR Code</h3>
+                    <p>Support untuk teks, URL, informasi kontak, dan berbagai jenis data lainnya.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📸</div>
+                    <h3>Convert Media ke QR</h3>
+                    <p>Ubah foto dan video menjadi QR Code yang dapat dibagikan dengan mudah.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💾</div>
+                    <h3>Download Gratis</h3>
+                    <p>Download QR Code hasil generate dalam format PNG tanpa biaya.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="about">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Tentang QRator</h3>
+                    <p>QRator adalah platform untuk membuat QR Code dengan mudah. Kami membantu masyarakat dalam menerapkan teknologi digital dalam kehidupan sehari-hari.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Kontak</h3>
+                    <p>Email: jazirahahmad7@gmail.com</p>
+                    <p>Telepon: +62 123 456 789</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 QRator - All rights reserved</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize QR Code library
+            qrcode = qrcode || {};
+            
+            // Elements
+            const typeButtons = document.querySelectorAll('.type-btn');
+            const qrContent = document.getElementById('qr-content');
+            const contactFields = document.getElementById('contact-fields');
+            const textFields = document.getElementById('text-fields');
+            const mediaUpload = document.getElementById('media-upload');
+            const generateBtn = document.getElementById('generate-btn');
+            const downloadBtn = document.getElementById('download-btn');
+            const qrCodeDiv = document.getElementById('qrcode');
+            const fileInput = document.getElementById('file-input');
+            const dropArea = document.getElementById('drop-area');
+            const mediaPreview = document.getElementById('media-preview');
+            const mediaContainer = document.getElementById('media-container');
+            const fileName = document.getElementById('file-name');
+            const fileSize = document.getElementById('file-size');
+            const fileType = document.getElementById('file-type');
+            const convertBtn = document.getElementById('convert-btn');
+            
+            let currentType = 'text';
+            let currentFile = null;
+            
+            // Type selector - FIXED
+            typeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    typeButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    currentType = this.dataset.type;
+                    
+                    // Reset semua field terlebih dahulu
+                    contactFields.style.display = 'none';
+                    qrContent.style.display = 'block';
+                    mediaUpload.classList.remove('active');
+                    
+                    // Tampilkan field yang sesuai dengan tipe yang dipilih
+                    if (currentType === 'contact') {
+                        contactFields.style.display = 'block';
+                        qrContent.style.display = 'none';
+                    } else if (currentType === 'media') {
+                        qrContent.style.display = 'none';
+                        mediaUpload.classList.add('active');
+                    }
+                });
+            });
+            
+            // File input handling
+            fileInput.addEventListener('change', handleFileSelect);
+            
+            // Drag and drop handling
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, unhighlight, false);
+            });
+            
+            function highlight() {
+                dropArea.style.borderColor = '#4361ee';
+                dropArea.style.backgroundColor = 'rgba(67, 97, 238, 0.1)';
+            }
+            
+            function unhighlight() {
+                dropArea.style.borderColor = '#ccc';
+                dropArea.style.backgroundColor = 'transparent';
+            }
+            
+            dropArea.addEventListener('drop', handleDrop, false);
+            
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                handleFiles(files);
+            }
+            
+            function handleFileSelect(e) {
+                const files = e.target.files;
+                handleFiles(files);
+            }
+            
+            function handleFiles(files) {
+                if (files.length > 0) {
+                    currentFile = files[0];
+                    displayFileInfo(currentFile);
+                    previewFile(currentFile);
+                }
+            }
+            
+            function displayFileInfo(file) {
+                fileName.textContent = file.name;
+                fileSize.textContent = formatFileSize(file.size);
+                fileType.textContent = file.type;
+                mediaPreview.style.display = 'block';
+            }
+            
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+            
+            function previewFile(file) {
+                mediaContainer.innerHTML = '';
+                
+                if (file.type.startsWith('image/')) {
+                    const img = document.createElement('img');
+                    img.file = file;
+                    mediaContainer.appendChild(img);
+                    
+                    const reader = new FileReader();
+                    reader.onload = (function(aImg) {
+                        return function(e) {
+                            aImg.src = e.target.result;
+                        };
+                    })(img);
+                    reader.readAsDataURL(file);
+                } else if (file.type.startsWith('video/')) {
+                    const video = document.createElement('video');
+                    video.controls = true;
+                    video.file = file;
+                    mediaContainer.appendChild(video);
+                    
+                    const reader = new FileReader();
+                    reader.onload = (function(aVideo) {
+                        return function(e) {
+                            aVideo.src = e.target.result;
+                        };
+                    })(video);
+                    reader.readAsDataURL(file);
+                }
+            }
+            
+            // Convert media to QR Code
+            convertBtn.addEventListener('click', function() {
+                if (!currentFile) {
+                    alert('Silakan pilih file terlebih dahulu');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Generate QR Code dengan data URL dari file
+                    const dataURL = e.target.result;
+                    
+                    // Clear previous QR Code
+                    qrCodeDiv.innerHTML = '';
+                    
+                    // Generate new QR Code
+                    const typeNumber = 0;
+                    const errorCorrectionLevel = 'L';
+                    const qr = qrcode(typeNumber, errorCorrectionLevel);
+                    qr.addData(dataURL);
+                    qr.make();
+                    
+                    qrCodeDiv.innerHTML = qr.createSvgTag({
+                        scalable: true,
+                        margin: 4
+                    });
+                    
+                    // Enable download button
+                    downloadBtn.disabled = false;
+                    
+                    // Scroll to QR code
+                    qrCodeDiv.scrollIntoView({ behavior: 'smooth' });
+                };
+                reader.readAsDataURL(currentFile);
+            });
+            
+            // Generate QR Code
+            generateBtn.addEventListener('click', function() {
+                let content = '';
+                
+                if (currentType === 'contact') {
+                    const name = document.getElementById('contact-name').value;
+                    const phone = document.getElementById('contact-phone').value;
+                    const email = document.getElementById('contact-email').value;
+                    
+                    content = `MECARD:N:${name};TEL:${phone};EMAIL:${email};;`;
+                } else if (currentType === 'media') {
+                    alert('Gunakan tombol "Convert to QR Code" untuk media file');
+                    return;
+                } else {
+                    content = qrContent.value.trim();
+                    
+                    if (currentType === 'url' && !content.startsWith('http')) {
+                        content = 'https://' + content;
+                    }
+                }
+                
+                if (!content) {
+                    alert('Silakan masukkan konten untuk QR Code');
+                    return;
+                }
+                
+                // Clear previous QR Code
+                qrCodeDiv.innerHTML = '';
+                
+                // Generate new QR Code
+                const typeNumber = 0;
+                const errorCorrectionLevel = 'L';
+                const qr = qrcode(typeNumber, errorCorrectionLevel);
+                qr.addData(content);
+                qr.make();
+                
+                qrCodeDiv.innerHTML = qr.createSvgTag({
+                    scalable: true,
+                    margin: 4
+                });
+                
+                // Enable download button
+                downloadBtn.disabled = false;
+            });
+            
+            // Download QR Code
+            downloadBtn.addEventListener('click', function() {
+                const svg = qrCodeDiv.querySelector('svg');
+                if (!svg) {
+                    alert('Generate QR Code terlebih dahulu');
+                    return;
+                }
+                
+                // Convert SVG to data URL
+                const svgData = new XMLSerializer().serializeToString(svg);
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+                
+                img.onload = function() {
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+                    
+                    const link = document.createElement('a');
+                    link.download = 'qrator-qrcode.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                };
+                
+                img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+            });
+        });
+    </script>
+</body>
+</html>
